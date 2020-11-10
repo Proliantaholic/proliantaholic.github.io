@@ -7,11 +7,20 @@ if (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]:
     Start-Process powershell.exe "-NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`"" -Verb RunAs; exit
 }
 
-# Check WinUserLanguageList for zh-Hant-TW
-$i = 0
-while ((Get-WinUserLanguageList)[$i].LanguageTag -ne "zh-Hant-TW")
-{
-    $i++
+# List installed language(s), add zh-Hant-TW language if not found
+$i = -1
+Write-Host Installed language`(s`):
+for ($n=0; $n -lt (Get-WinUserLanguageList).Count; $n++) {
+    Write-Host (Get-WinUserLanguageList)[$n].LanguageTag (Get-WinUserLanguageList)[$n].Autonym
+    if ((Get-WinUserLanguageList)[$n].LanguageTag -eq "zh-Hant-TW") {
+        $i = $n
+    }
+}
+if ($i -eq -1) {
+    $OldList = Get-WinUserLanguageList
+    $OldList.Add("zh-Hant-TW")
+    Set-WinUserLanguageList -LanguageList $OldList -Force
+    $i = $n
 }
 
 $GuidChangJie = "0404:{531FDEBF-9B4C-4A43-A2AA-960E8FCDC732}{4BDF9F03-C7D3-11D4-B2AB-0080C882687E}"
@@ -77,6 +86,10 @@ powershell {
     $UserLanguageList[$j].InputMethodTips.Add("0404:{B115690A-EA02-48D5-A231-E3578D2FDF80}{F3BA907A-6C7E-11D4-97FA-0080C882687E}")
     $UserLanguageList[$j].InputMethodTips.Add("0404:{B115690A-EA02-48D5-A231-E3578D2FDF80}{0B883BA0-C1C7-11D4-87F9-0080C882687E}")
     Set-WinUserLanguageList -LanguageList $UserLanguageList -Force
+}
+Write-Host Installed language`(s`) now:
+for ($n=0; $n -lt (Get-WinUserLanguageList).Count; $n++) {
+    Write-Host (Get-WinUserLanguageList)[$n].LanguageTag
 }
 $CheckIfAddedOK = (Get-WinUserLanguageList)[$i].InputMethodTips
 if ($CheckIfAddedOK.Contains($GuidNewChangJie)) {
