@@ -4,4 +4,4 @@ Windows Registry Editor Version 5.00
 "TargetReleaseVersion"=dword:00000001
 
 [HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate]
-"TargetReleaseVersionInfo"="2010"
+"TargetReleaseVersionInfo"="2105"
